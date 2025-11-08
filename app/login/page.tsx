@@ -13,8 +13,8 @@ export default function Login() {
     e.preventDefault()
     setErr(null)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) return setErr(error.message)
-    router.push('/(app)/dashboard')
+    if (error) return setErr('Giriş başarısız. Şifre hatalı olabilir veya e-posta doğrulanmamış olabilir.')
+    router.push('/dashboard') // ✅ kesin doğru rota
   }
 
   return (
@@ -26,9 +26,8 @@ export default function Login() {
           <input className="input" placeholder="Şifre" value={password} onChange={e=>setPassword(e.target.value)} type="password" required/>
           <button className="btn" type="submit">Giriş</button>
         </form>
-        {err && <p style={{color:'#ff8a8a', marginTop:10}}>{err}</p>}
         <div className="hr" />
-        <p>Hesabın yok mu? <a href="/(auth)/signup">Kayıt ol</a></p>
+        <p>Hesabın yok mu? <a className="btn" href="/signup" style={{background:'#20263a'}}>Kayıt Ol</a></p>
       </div>
     </main>
   )
