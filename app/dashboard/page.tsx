@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { levelFromXP } from '@/lib/xp'
@@ -16,13 +17,17 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return
-    supabase.from('activities').select('*').order('created_at', { ascending:false }).then(({ data }) => {
-      if (data) {
-        setActivities(data as Activity[])
-        const sum = data.reduce((a:any,b:any)=>a + (b.xp||0), 0)
-        setTotalXP(sum)
-      }
-    })
+    supabase
+      .from('activities')
+      .select('*')
+      .order('created_at', { ascending:false })
+      .then(({ data }) => {
+        if (data) {
+          setActivities(data as Activity[])
+          const sum = data.reduce((a:any,b:any)=>a + (b.xp||0), 0)
+          setTotalXP(sum)
+        }
+      })
   }, [user])
 
   if (!user) {
@@ -32,8 +37,8 @@ export default function Dashboard() {
           <div>
             <p>Devam etmek için giriş yap.</p>
             <div className="center" style={{gap:10, marginTop:10}}>
-              <a className="btn" href="/(auth)/login">Giriş</a>
-              <a className="btn" style={{background:'#20263a'}} href="/(auth)/signup">Kayıt</a>
+              <Link className="btn" href="/login">Giriş</Link>
+              <Link className="btn" href="/signup" style={{background:'#20263a'}}>Kayıt</Link>
             </div>
           </div>
         </div>
@@ -48,12 +53,14 @@ export default function Dashboard() {
       <div className="grid">
         <div className="card">
           <h2>Merhaba 👋</h2>
-          <p style={{color:'var(--muted)'}}>Toplam XP: <b>{totalXP}</b> — Level: <b>{level}</b> — Sonraki levele: <b>{next - Math.floor((progress/100)*next)} XP</b></p>
+          <p style={{color:'var(--muted)'}}>
+            Toplam XP: <b>{totalXP}</b> — Level: <b>{level}</b> — Sonraki levele: <b>{next - Math.floor((progress/100)*next)} XP</b>
+          </p>
           <div style={{marginTop:10, background:'#20263a', borderRadius:10, overflow:'hidden'}}>
             <div style={{height:12, width:progress+'%', background:'linear-gradient(90deg, #6C63FF, #8A7CFF)'}} />
           </div>
           <div style={{marginTop:14}}>
-            <a className="btn" href="/(app)/log">+ Aktivite Ekle</a>
+            <Link className="btn" href="/log">+ Aktivite Ekle</Link>
           </div>
         </div>
 
