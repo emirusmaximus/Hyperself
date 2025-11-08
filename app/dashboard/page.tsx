@@ -11,10 +11,12 @@ export default function Dashboard() {
   const [activities, setActivities] = useState<Activity[]>([])
   const [totalXP, setTotalXP] = useState(0)
 
+  // Kullanıcıyı çek
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
   }, [])
 
+  // Kullanıcı varsa aktiviteleri al
   useEffect(() => {
     if (!user) return
     supabase
@@ -30,6 +32,7 @@ export default function Dashboard() {
       })
   }, [user])
 
+  // Kullanıcı giriş yapmamışsa
   if (!user) {
     return (
       <main className="container">
@@ -46,6 +49,7 @@ export default function Dashboard() {
     )
   }
 
+  // XP'den level hesapla
   const { level, progress, next } = levelFromXP(totalXP)
 
   return (
@@ -56,9 +60,13 @@ export default function Dashboard() {
           <p style={{color:'var(--muted)'}}>
             Toplam XP: <b>{totalXP}</b> — Level: <b>{level}</b> — Sonraki levele: <b>{next - Math.floor((progress/100)*next)} XP</b>
           </p>
+
+          {/* İlerleme barı */}
           <div style={{marginTop:10, background:'#20263a', borderRadius:10, overflow:'hidden'}}>
             <div style={{height:12, width:progress+'%', background:'linear-gradient(90deg, #6C63FF, #8A7CFF)'}} />
           </div>
+
+          {/* Aktivite ekleme */}
           <div style={{marginTop:14}}>
             <Link className="btn" href="/log">+ Aktivite Ekle</Link>
           </div>
@@ -69,7 +77,7 @@ export default function Dashboard() {
           <div className="hr" />
           {activities.length === 0 && <p style={{color:'var(--muted)'}}>Henüz aktivite yok.</p>}
           <div className="grid">
-            {activities.map(a=>(
+            {activities.map(a => (
               <div key={a.id} className="card">
                 <div className="badge">{new Date(a.created_at).toLocaleString()}</div>
                 <h4 style={{margin:'8px 0'}}>{a.category} · {a.minutes} dk · Int {a.intensity}</h4>
